@@ -40,7 +40,6 @@ def get_people():
 def get_person(id):
     # получаем пользователя по id
     person = find_person(id)
-    print(person)
     # если пользователь найден, отправляем его
     return person
 
