@@ -1,26 +1,8 @@
-import uuid
-from fastapi import FastAPI, Body
-from fastapi.exceptions import HTTPException
-from fastapi.responses import FileResponse
-
-
-class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-        self.id = str(uuid.uuid4())
-
-
-# условная база данных - набор объектов Person
-people = [Person("Tom", 38), Person("Bob", 42), Person("Sam", 28)]
-
-
-# для поиска пользователя в списке people
-def find_person(id):
-    for person in people:
-        if person.id == id:
-            return person
-    raise HTTPException(status_code=404, detail="person not found")
+from fastapi import Depends, FastAPI, Body
+from fastapi.responses import FileResponse, JSONResponse
+from sqlalchemy.orm import Session
+from db_engine.db_engine import get_db
+from models.models import Person
 
 
 app = FastAPI()
@@ -32,41 +14,61 @@ async def main():
 
 
 @app.get("/api/users")
-def get_people():
-    return people
+async def get_people(db: Session = Depends(get_db)):
+    return db.query(Person).all()
 
 
 @app.get("/api/users/{id}")
-def get_person(id):
+async def get_person(id, db: Session = Depends(get_db)):
     # получаем пользователя по id
-    person = find_person(id)
+    person = db.query(Person).filter(Person.id == id).first()
+    # если не найден, отправляем статусный код и сообщение об ошибке
+    if person is None:
+        return JSONResponse(
+            status_code=404, content={"message": "User not found"}
+        )
     # если пользователь найден, отправляем его
     return person
 
 
 @app.post("/api/users")
-def create_person(data=Body()):
-    person = Person(data["name"], data["age"])
-    # добавляем объект в список people
-    people.append(person)
+async def create_person(data=Body(), db: Session = Depends(get_db)):
+    person = Person(name=data["name"], age=data["age"])
+    db.add(person)
+    db.commit()
+    db.refresh(person)
     return person
 
 
 @app.put("/api/users")
-def edit_person(data=Body()):
+async def edit_person(data=Body(), db: Session = Depends(get_db)):
     # получаем пользователя по id
+    person = db.query(Person).filter(Person.id == data["id"]).first()
     # если не найден, отправляем статусный код и сообщение об ошибке
-    person = find_person(data["id"])
-    # если пользователь найден, изменяем его данные и отправляем клиенту
+    if person is None:
+        return JSONResponse(
+            status_code=404, content={"message": "User not found"}
+        )
+    # если пользователь найден, изменяем его данные и отправляем обратно
     person.age = data["age"]
     person.name = data["name"]
+    db.commit()  # сохраняем изменения
+    db.refresh(person)
     return person
 
 
 @app.delete("/api/users/{id}")
-def delete_person(id):
+async def delete_person(id, db: Session = Depends(get_db)):
     # получаем пользователя по id
-    person = find_person(id)
+    person = db.query(Person).filter(Person.id == id).first()
+
+    # если не найден, отправляем статусный код и сообщение об ошибке
+    if person is None:
+        return JSONResponse(
+            status_code=404, content={"message": "User not found"}
+        )
+
     # если пользователь найден, удаляем его
-    people.remove(person)
+    db.delete(person)
+    db.commit()
     return person
