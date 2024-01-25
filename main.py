@@ -1,7 +1,7 @@
 import uuid
-from fastapi import FastAPI, Body, status
+from fastapi import FastAPI, Body
 from fastapi.exceptions import HTTPException
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import FileResponse
 
 
 class Person:
@@ -20,7 +20,7 @@ def find_person(id):
     for person in people:
         if person.id == id:
             return person
-    raise HTTPException(status_code=404, detail='person not found')
+    raise HTTPException(status_code=404, detail="person not found")
 
 
 app = FastAPI()
