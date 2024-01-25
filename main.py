@@ -21,17 +21,18 @@ async def get_people(db: Session = Depends(get_db)):
 
 @app.get("/api/users/{id}")
 async def get_person(id, db: Session = Depends(get_db)):
-    # получаем пользователя по id
+    # get user by id
     person = db.query(Person).filter(Person.id == id).first()
-    # если не найден, отправляем статусный код и сообщение об ошибке
+    # if None: status_code=200
     get_person_or_404(person)
-    # если пользователь найден, отправляем его
+    # if person:
     return person
 
 
 @app.post("/api/users")
 async def create_person(data=Body(), db: Session = Depends(get_db)):
     person = Person(name=data["name"], age=data["age"])
+    # add new person
     db.add(person)
     db.commit()
     db.refresh(person)
@@ -40,26 +41,21 @@ async def create_person(data=Body(), db: Session = Depends(get_db)):
 
 @app.put("/api/users")
 async def edit_person(data=Body(), db: Session = Depends(get_db)):
-    # получаем пользователя по id
     person = db.query(Person).filter(Person.id == data["id"]).first()
-    # если не найден, отправляем статусный код и сообщение об ошибке
     get_person_or_404(person)
-    # если пользователь найден, изменяем его данные и отправляем обратно
+    # if person: change data
     person.age = data["age"]
     person.name = data["name"]
-    db.commit()  # сохраняем изменения
+    db.commit()  # save changes
     db.refresh(person)
     return person
 
 
 @app.delete("/api/users/{id}")
 async def delete_person(id, db: Session = Depends(get_db)):
-    # получаем пользователя по id
     person = db.query(Person).filter(Person.id == id).first()
-
-    # если не найден, отправляем статусный код и сообщение об ошибке
     get_person_or_404(person)
-    # если пользователь найден, удаляем его
+    # if person: delete
     db.delete(person)
     db.commit()
     return person
