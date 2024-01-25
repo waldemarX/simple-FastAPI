@@ -9,6 +9,7 @@ load_dotenv(find_dotenv())
 DB_PASSWORD = getenv("DB_PASSWORD")
 DB_USERNAME = getenv("DB_USERNAME")
 
+# connect to database
 engine = create_engine(
     f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@localhost/test"
 )
@@ -19,10 +20,11 @@ Base = declarative_base()
 
 Base.metadata.create_all(bind=engine)
 
+# creare session to interact with database
 SessionLocal = sessionmaker(autoflush=False, bind=engine)
 
 
-# зависимость
+# open session when need and close after usage
 def get_db():
     db = SessionLocal()
     try:

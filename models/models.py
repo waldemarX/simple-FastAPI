@@ -3,6 +3,8 @@ from db_engine.db_engine import Base
 
 
 class Person(Base):
+    """Database table"""
+
     __tablename__ = "people"
 
     id = Column(Integer, primary_key=True, index=True)
