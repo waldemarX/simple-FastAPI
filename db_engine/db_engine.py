@@ -15,9 +15,7 @@ engine = create_engine(
 )
 engine.connect()
 
-
 Base = declarative_base()
-
 Base.metadata.create_all(bind=engine)
 
 # creare session to interact with database

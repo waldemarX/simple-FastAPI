@@ -20,7 +20,7 @@ async def get_people(db: Session = Depends(get_db)):
 
 
 @app.get("/api/users/{id}")
-async def get_person(id, db: Session = Depends(get_db)):
+async def get_person(id: int, db: Session = Depends(get_db)):
     # get user by id
     person = db.query(Person).filter(Person.id == id).first()
     # if None: status_code=200
@@ -52,7 +52,7 @@ async def edit_person(data=Body(), db: Session = Depends(get_db)):
 
 
 @app.delete("/api/users/{id}")
-async def delete_person(id, db: Session = Depends(get_db)):
+async def delete_person(id: int, db: Session = Depends(get_db)):
     person = db.query(Person).filter(Person.id == id).first()
     get_person_or_404(person)
     # if person: delete
