@@ -1,1 +1,1 @@
-### Simple example of creating API
+### Simple API template with FastAPI and SQLAlchemy
