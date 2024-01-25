@@ -1,1 +1,1 @@
-### Simple example of using FastAPI
+### Simple example of creating API
