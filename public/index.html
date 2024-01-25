@@ -16,27 +16,27 @@
 </head>
 
 <body>
-    <h2>Список пользователей</h2>
+    <h2>Users list</h2>
     <div>
         <input type="hidden" id="userId" />
         <p>
-            Имя:<br />
+            Name:<br />
             <input id="userName" />
         </p>
         <p>
-            Возраст:<br />
+            Age:<br />
             <input id="userAge" type="number" />
         </p>
         <p>
-            <button id="saveBtn">Сохранить</button>
-            <button id="resetBtn">Сбросить</button>
+            <button id="saveBtn">Save</button>
+            <button id="resetBtn">Reset</button>
         </p>
     </div>
     <table>
         <thead>
             <tr>
-                <th>Имя</th>
-                <th>Возраст</th>
+                <th>Name</th>
+                <th>Age</th>
                 <th></th>
             </tr>
         </thead>
@@ -158,12 +158,12 @@
             const linksTd = document.createElement("td");
 
             const editLink = document.createElement("button");
-            editLink.append("Изменить");
+            editLink.append("Change");
             editLink.addEventListener("click", async () => await getUser(user.id));
             linksTd.append(editLink);
 
             const removeLink = document.createElement("button");
-            removeLink.append("Удалить");
+            removeLink.append("Delete");
             removeLink.addEventListener("click", async () => await deleteUser(user.id));
 
             linksTd.append(removeLink);
