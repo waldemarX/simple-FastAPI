@@ -34,7 +34,7 @@ async def create_person(data=Body(), db: Session = Depends(get_db)):
     person = Person(name=data["name"], age=data["age"])
     # add new person
     db.add(person)
-    db.commit()
+    db.commit()  # save changes
     db.refresh(person)
     return person
 
@@ -46,7 +46,7 @@ async def edit_person(data=Body(), db: Session = Depends(get_db)):
     # if person: change data
     person.age = data["age"]
     person.name = data["name"]
-    db.commit()  # save changes
+    db.commit()
     db.refresh(person)
     return person
 
